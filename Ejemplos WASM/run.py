@@ -14,6 +14,7 @@ def call_wasm_fun(file_name, fn_name, *args):
 def main():
     print(call_wasm_fun('simple.wat', 'meaning_of_life'))
     print(call_wasm_fun('simple.wat', 'multiply', 11, 9))
+    print(call_wasm_fun('simple.wat', 'promedio', 1.0, 2.0, 3.5))
 
 
 if __name__ == '__main__':
