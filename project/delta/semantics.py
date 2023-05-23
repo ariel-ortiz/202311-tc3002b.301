@@ -9,6 +9,8 @@ class SemanticMistake(Exception):
 
 class SemanticVisitor(PTNodeVisitor):
 
+    RESERVED_WORDS = ['true', 'false', 'var']
+
     def __init__(self, parser, **kwargs):
         super().__init__(**kwargs)
         self.__parser = parser
@@ -20,6 +22,20 @@ class SemanticVisitor(PTNodeVisitor):
     @property
     def symbol_table(self):
         return self.__symbol_table
+
+    def visit_decl_variable(self, node, children):
+        name = node.value
+        if name in SemanticVisitor.RESERVED_WORDS:
+            raise SemanticMistake(
+                'Reserved word not allowed as variable name at position '
+                f'{self.position(node)} => {name}'
+            )
+        if name in self.__symbol_table:
+            raise SemanticMistake(
+                'Duplicate variable declaration at position'
+                f'{self.position(node)} => {name}'
+            )
+        self.__symbol_table.append(name)
 
     def visit_decimal(self, node, children):
         value = int(node.value)
