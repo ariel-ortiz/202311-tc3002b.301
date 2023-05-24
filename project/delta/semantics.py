@@ -37,10 +37,26 @@ class SemanticVisitor(PTNodeVisitor):
             )
         self.__symbol_table.append(name)
 
+    def visit_lhs_variable(self, node, children):
+        name = node.value
+        if name not in self.__symbol_table:
+            raise SemanticMistake(
+                'Assignment to undeclared variable at position '
+                f'{self.position(node)} => {name}'
+            )
+
     def visit_decimal(self, node, children):
         value = int(node.value)
         if value >= 2 ** 31:
             raise SemanticMistake(
                 'Out of range decimal integer literal at position '
                 f'{self.position(node)} => {value}'
+            )
+
+    def visit_rhs_variable(self, node, children):
+        name = node.value
+        if name not in self.__symbol_table:
+            raise SemanticMistake(
+                'Undeclared variable reference at position '
+                f'{self.position(node)} => {name}'
             )
